@@ -1,37 +1,15 @@
-## Welcome to GitHub Pages
+![Image](https://img.shields.io/github/license/viacheslav-lozinskyi/Preview-CSV)
+![Image](https://img.shields.io/github/issues/viacheslav-lozinskyi/Preview-CSV)
+![Image](https://img.shields.io/github/stars/viacheslav-lozinskyi/Preview-CSV)
+![Image](https://img.shields.io/github/languages/code-size/viacheslav-lozinskyi/Preview-CSV)
+![Image](https://img.shields.io/badge/VS-2019-blueviolet)
+![Image](https://img.shields.io/badge/VS-2017-blueviolet)
+![Image](https://img.shields.io/badge/VS-2015-blueviolet)
 
-You can use the [editor on GitHub](https://github.com/viacheslav-lozinskyi/CSV-Preview/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+### Now you can look inside CSV file not opening it.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+![Image](resource/video/Presentation1.gif)
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/viacheslav-lozinskyi/CSV-Preview/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Download the extension from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.Preview-CSV)
+<hr>
+Data visualization is based on <a href="https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.MetaProject">MetaProject</a>
