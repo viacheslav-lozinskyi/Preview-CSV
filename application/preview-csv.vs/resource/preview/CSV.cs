@@ -41,54 +41,18 @@ namespace resource.preview
             var a_Index = 0;
             foreach (var a_Context in node)
             {
-                var a_IsFound = true;
-                if (a_Index == 0)
-                {
-                    __Execute(a_Context, level, context, ref a_IsFound);
-                }
                 {
                     a_Index++;
                 }
                 {
-                    __Execute(a_Context, level, context, a_Index, url, a_IsFound);
+                    __Execute(a_Context, level, context, a_Index, url);
                 }
             }
         }
 
-        private static void __Execute(ICsvLine node, int level, atom.Trace context, ref bool isCaption)
+        private static void __Execute(ICsvLine node, int level, atom.Trace context, int index, string url)
         {
-            foreach (var a_Context in node.Values)
-            {
-                var a_Context1 = __GetName(a_Context);
-                var a_Result = 0.0;
-                if (string.IsNullOrEmpty(a_Context1) || double.TryParse(a_Context1, NumberStyles.Any, CultureInfo.InvariantCulture, out a_Result))
-                {
-                    isCaption = false;
-                    break;
-                }
-            }
-            if (isCaption == false)
-            {
-                var a_Index = 1;
-                {
-                    context.
-                        SetComment("<[[Caption]]>").
-                        SetHint("<[[Row type]]>").
-                        SetFlag(NAME.FLAG.HIGHLIGHT).
-                        Send(NAME.PATTERN.PREVIEW, level, "HEADER");
-                }
-                foreach (var a_Context in node.Values)
-                {
-                    context.
-                        Send(NAME.PATTERN.ELEMENT, level + 1, "Collumn " + a_Index.ToString());
-                    a_Index++;
-                }
-            }
-        }
-
-        private static void __Execute(ICsvLine node, int level, atom.Trace context, int index, string url, bool isCaption)
-        {
-            if (isCaption && (index == 1))
+            if ((index == 1) && __IsCaption(node))
             {
                 context.
                     SetComment("<[[Caption]]>").
@@ -112,6 +76,21 @@ namespace resource.preview
                 context.
                     Send(NAME.PATTERN.ELEMENT, level + 1, __GetName(a_Context));
             }
+        }
+
+        private static bool __IsCaption(ICsvLine node)
+        {
+            var a_Result = true;
+            foreach (var a_Context in node.Values)
+            {
+                var a_Context1 = __GetName(a_Context);
+                var a_Context2 = 0.0;
+                if (string.IsNullOrEmpty(a_Context1) || double.TryParse(a_Context1, NumberStyles.Any, CultureInfo.InvariantCulture, out a_Context2))
+                {
+                    return false;
+                }
+            }
+            return a_Result;
         }
 
         private static string __GetName(string value)
