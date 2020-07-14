@@ -74,6 +74,7 @@ namespace resource.preview
                     context.
                         SetComment("<[[Caption]]>").
                         SetHint("<[[Row type]]>").
+                        SetFlag(NAME.FLAG.HIGHLIGHT).
                         Send(NAME.PATTERN.PREVIEW, level, "HEADER");
                 }
                 foreach (var a_Context in node.Values)
@@ -91,7 +92,8 @@ namespace resource.preview
             {
                 context.
                     SetComment("<[[Caption]]>").
-                    SetHint("<[[Row type]]>");
+                    SetHint("<[[Row type]]>").
+                    SetFlag(NAME.FLAG.HIGHLIGHT);
             }
             else
             {
