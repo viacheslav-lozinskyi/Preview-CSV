@@ -13,37 +13,55 @@ namespace resource.preview
         {
             var a_Context = new CsvOptions
             {
-                RowsToSkip = 0, // Allows skipping of initial rows without csv data
+                RowsToSkip = 0,
                 SkipRow = (row, idx) => string.IsNullOrEmpty(row) || row[0] == '#',
-                Separator = '\0', // Autodetects based on first row
-                TrimData = true, // Can be used to trim each cell
-                Comparer = null, // Can be used for case-insensitive comparison for names
-                HeaderMode = HeaderMode.HeaderAbsent, // Assumes first row is a header row
-                ValidateColumnCount = false, // Checks each row immediately for column count
-                ReturnEmptyForMissingColumn = false, // Allows for accessing invalid column names
-                Aliases = null, // A collection of alternative column names
-                AllowNewLineInEnclosedFieldValues = false, // Respects new line (either \r\n or \n) characters inside field values enclosed in double quotes.
-                AllowBackSlashToEscapeQuote = true, // Allows the sequence "\"" to be a valid quoted value (in addition to the standard """")
-                AllowSingleQuoteToEncloseFieldValues = true, // Allows the single-quote character to be used to enclose field values
-                NewLine = Environment.NewLine // The new line string to use when multiline field values are read (Requires "AllowNewLineInEnclosedFieldValues" to be set to "true" for this to have any effect.)
+                Separator = '\0',
+                TrimData = true,
+                Comparer = null,
+                HeaderMode = HeaderMode.HeaderAbsent,
+                ValidateColumnCount = false,
+                ReturnEmptyForMissingColumn = true,
+                Aliases = null,
+                AllowNewLineInEnclosedFieldValues = false,
+                AllowBackSlashToEscapeQuote = true,
+                AllowSingleQuoteToEncloseFieldValues = true,
+                NewLine = Environment.NewLine
             };
             {
                 var a_Context1 = CsvReader.ReadFromText(File.ReadAllText(url), a_Context);
                 if (a_Context1 != null)
                 {
-                    __Execute(a_Context1, 1, context, url);
+                    __Execute(a_Context1, 1, context, url, GetProperty(NAME.PROPERTY.LIMIT_ITEM_COUNT));
+                }
+                {
+                    context.
+                        Send(NAME.PATTERN.ELEMENT, 1, __GetFooter(a_Context1));
                 }
             }
         }
 
-        private static void __Execute(IEnumerable<ICsvLine> node, int level, atom.Trace context, string url)
+        private static void __Execute(IEnumerable<ICsvLine> node, int level, atom.Trace context, string url, int limit)
         {
             var a_Index = 0;
             foreach (var a_Context in node)
             {
+                if (GetState() == STATE.CANCEL)
+                {
+                    context.
+                        SendWarning(level, NAME.WARNING.TERMINATED);
+                    return;
+                }
+                else
                 {
                     a_Index++;
                 }
+                if (a_Index > limit)
+                {
+                    context.
+                        SendWarning(level, NAME.WARNING.DATA_SKIPPED);
+                    return;
+                }
+                else
                 {
                     __Execute(a_Context, level, context, a_Index, url);
                 }
@@ -55,7 +73,7 @@ namespace resource.preview
             if ((index == 1) && __IsCaption(node))
             {
                 context.
-                    SetComment("<[[Caption]]>").
+                    SetComment("<[[Header]]>").
                     SetHint("<[[Row type]]>").
                     SetFlag(NAME.FLAG.HIGHLIGHT);
             }
@@ -63,7 +81,7 @@ namespace resource.preview
             {
                 context.
                     SetComment("[" + index.ToString("D4") + "]").
-                    SetHint("[[[Row number]]]"); 
+                    SetHint("[[[Row number]]]");
             }
             {
                 context.
@@ -113,6 +131,18 @@ namespace resource.preview
                 }
             }
             return a_Result.Trim();
+        }
+
+        private static string __GetFooter(IEnumerable<ICsvLine> context)
+        {
+            var a_Context1 = 0;
+            var a_Context2 = 0;
+            foreach (var a_Context in context)
+            {
+                a_Context1++;
+                a_Context2 = Math.Max(a_Context2, a_Context.ColumnCount);
+            }
+            return "[[Row count]]: " + a_Context1.ToString() + "   [[Column count]]: " + a_Context2.ToString();
         }
     };
 }

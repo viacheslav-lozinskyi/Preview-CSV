@@ -67,11 +67,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MetaPreview">
+      <Version>1.0.6</Version>
+    </PackageReference>
     <PackageReference Include="Csv">
       <Version>1.0.57</Version>
-    </PackageReference>
-    <PackageReference Include="MetaPreview">
-      <Version>1.0.5</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
