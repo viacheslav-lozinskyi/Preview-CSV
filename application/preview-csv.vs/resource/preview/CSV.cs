@@ -33,6 +33,7 @@ namespace resource.preview
                 {
                     __Execute(a_Context1, 1, context, url, GetProperty(NAME.PROPERTY.LIMIT_ITEM_COUNT));
                 }
+                if (GetProperty(NAME.PROPERTY.PREVIEW_SHOW_FOOTER) != 0)
                 {
                     context.
                         Send(NAME.PATTERN.ELEMENT, 1, __GetFooter(a_Context1));
