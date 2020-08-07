@@ -11,33 +11,41 @@ namespace resource.preview
     {
         protected override void _Execute(atom.Trace context, string url)
         {
-            var a_Context = new CsvOptions
+            if (File.Exists(url))
             {
-                RowsToSkip = 0,
-                SkipRow = (row, idx) => string.IsNullOrEmpty(row) || row[0] == '#',
-                Separator = '\0',
-                TrimData = true,
-                Comparer = null,
-                HeaderMode = HeaderMode.HeaderAbsent,
-                ValidateColumnCount = false,
-                ReturnEmptyForMissingColumn = true,
-                Aliases = null,
-                AllowNewLineInEnclosedFieldValues = false,
-                AllowBackSlashToEscapeQuote = true,
-                AllowSingleQuoteToEncloseFieldValues = true,
-                NewLine = Environment.NewLine
-            };
+                var a_Context = new CsvOptions
+                {
+                    RowsToSkip = 0,
+                    SkipRow = (row, idx) => string.IsNullOrEmpty(row) || row[0] == '#',
+                    Separator = '\0',
+                    TrimData = true,
+                    Comparer = null,
+                    HeaderMode = HeaderMode.HeaderAbsent,
+                    ValidateColumnCount = false,
+                    ReturnEmptyForMissingColumn = true,
+                    Aliases = null,
+                    AllowNewLineInEnclosedFieldValues = false,
+                    AllowBackSlashToEscapeQuote = true,
+                    AllowSingleQuoteToEncloseFieldValues = true,
+                    NewLine = Environment.NewLine
+                };
+                {
+                    var a_Context1 = CsvReader.ReadFromText(File.ReadAllText(url), a_Context);
+                    if (a_Context1 != null)
+                    {
+                        __Execute(a_Context1, 1, context, url, GetProperty(NAME.PROPERTY.LIMIT_ITEM_COUNT));
+                    }
+                    if (GetProperty(NAME.PROPERTY.PREVIEW_SHOW_FOOTER) != 0)
+                    {
+                        context.
+                            Send(NAME.PATTERN.ELEMENT, 1, __GetFooter(a_Context1));
+                    }
+                }
+            }
+            else
             {
-                var a_Context1 = CsvReader.ReadFromText(File.ReadAllText(url), a_Context);
-                if (a_Context1 != null)
-                {
-                    __Execute(a_Context1, 1, context, url, GetProperty(NAME.PROPERTY.LIMIT_ITEM_COUNT));
-                }
-                if (GetProperty(NAME.PROPERTY.PREVIEW_SHOW_FOOTER) != 0)
-                {
-                    context.
-                        Send(NAME.PATTERN.ELEMENT, 1, __GetFooter(a_Context1));
-                }
+                context.
+                    SendError(1, "[[File not found]]");
             }
         }
 
@@ -143,7 +151,7 @@ namespace resource.preview
                 a_Context1++;
                 a_Context2 = Math.Max(a_Context2, a_Context.ColumnCount);
             }
-            return "[[Row count]]: " + a_Context1.ToString() + "   [[Column count]]: " + a_Context2.ToString();
+            return "[[Row Count]]: " + a_Context1.ToString();
         }
     };
 }
