@@ -35,9 +35,9 @@ namespace resource.preview
                     {
                         __Execute(a_Context1, 1, context, url, GetProperty(NAME.PROPERTY.LIMIT_ITEM_COUNT));
                     }
-                    if (GetProperty(NAME.PROPERTY.PREVIEW_SHOW_FOOTER) != 0)
                     {
                         context.
+                            SetState(NAME.STATE.FOOTER).
                             Send(NAME.PATTERN.ELEMENT, 1, __GetFooter(a_Context1));
                     }
                 }
@@ -83,19 +83,19 @@ namespace resource.preview
             {
                 context.
                     SetComment("<[[Header]]>").
-                    SetHint("<[[Row type]]>").
-                    SetFlag(NAME.FLAG.HIGHLIGHT);
+                    SetCommentHint("<[[Row type]]>").
+                    SetState(NAME.STATE.HIGHLIGHT);
             }
             else
             {
                 context.
                     SetComment("[" + index.ToString("D4") + "]").
-                    SetHint("[[[Row number]]]");
+                    SetCommentHint("[[[Row number]]]");
             }
             {
                 context.
                     SetUrl(url).
-                    SetLine(node.Index).
+                    SetUrlLine(node.Index).
                     Send(NAME.PATTERN.PREVIEW, level, "ROW");
             }
             foreach (var a_Context in node.Values)
