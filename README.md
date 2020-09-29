@@ -7,9 +7,14 @@
 ![Image](https://img.shields.io/badge/VS-2015-blueviolet)
 
 ### Now you can look inside CSV, DSV and TSV file not opening it.
+---
 
 ![Image](resource/video/Presentation1.gif)
 
+---
 Download the extension from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.Preview-CSV)
-<hr>
-Data visualization is based on <a href="https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.MetaProject">MetaProject</a>
+
+---
+Data visualization is based on [MetaProject](https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.MetaProject)
+
+Data extraction is based on [CSV](https://github.com/stevehansen/csv/)
