@@ -6,7 +6,7 @@
 ![Image](https://img.shields.io/badge/VS-2017-blueviolet)
 ![Image](https://img.shields.io/badge/VS-2015-blueviolet)
 
-### Now you can look inside CSV, DSV and TSV file not opening it.
+### Now you can look inside [CSV](https://en.wikipedia.org/wiki/Comma-separated_values), [DSV](https://en.wikipedia.org/wiki/Comma-separated_values) and [TSV](https://en.wikipedia.org/wiki/Comma-separated_values) files not opening it.
 ---
 
 ![Image](resource/video/Presentation1.gif)
