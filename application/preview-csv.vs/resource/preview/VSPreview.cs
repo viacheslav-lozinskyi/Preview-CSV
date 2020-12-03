@@ -7,7 +7,7 @@ using System.IO;
 
 namespace resource.preview
 {
-    public class CSV : cartridge.AnyPreview
+    internal class VSPreview : cartridge.AnyPreview
     {
         protected override void _Execute(atom.Trace context, string url)
         {
@@ -30,15 +30,23 @@ namespace resource.preview
                     NewLine = Environment.NewLine
                 };
                 {
-                    var a_Context1 = CsvReader.ReadFromText(File.ReadAllText(url), a_Context);
-                    if (a_Context1 != null)
+                    var a_Context1 = File.ReadAllText(url);
                     {
-                        __Execute(a_Context1, 1, context, url, GetProperty(NAME.PROPERTY.LIMIT_ITEM_COUNT));
-                    }
-                    {
-                        context.
-                            SetState(NAME.STATE.FOOTER).
-                            Send(NAME.PATTERN.ELEMENT, 1, __GetFooter(a_Context1));
+                        var a_Context2 = CsvReader.ReadFromText(a_Context1, a_Context);
+                        {
+                            context.
+                                SetState(NAME.STATE.HEADER).
+                                Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOLDER, 1, "[[Info]]");
+                            {
+                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, 2, "[[File Name]]", url);
+                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, 2, "[[File Size]]", a_Context1.Length.ToString());
+                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, 2, "[[Row Count]]", __GetRowCount(a_Context2));
+                            }
+                        }
+                        if (a_Context2 != null)
+                        {
+                            __Execute(a_Context2, 1, context, url, GetProperty(NAME.PROPERTY.PREVIEW_TABLE_SIZE));
+                        }
                     }
                 }
             }
@@ -84,7 +92,7 @@ namespace resource.preview
                 context.
                     SetComment("<[[Header]]>").
                     SetCommentHint("<[[Row type]]>").
-                    SetState(NAME.STATE.HIGHLIGHT);
+                    SetState(NAME.STATE.HEADER);
             }
             else
             {
@@ -96,12 +104,12 @@ namespace resource.preview
                 context.
                     SetUrl(url).
                     SetUrlLine(node.Index).
-                    Send(NAME.PATTERN.PREVIEW, level, "ROW");
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.TABLE, level, "ROW");
             }
             foreach (var a_Context in node.Values)
             {
                 context.
-                    Send(NAME.PATTERN.ELEMENT, level + 1, __GetName(a_Context));
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.TABLE, level + 1, __GetName(a_Context));
             }
         }
 
@@ -142,7 +150,7 @@ namespace resource.preview
             return a_Result.Trim();
         }
 
-        private static string __GetFooter(IEnumerable<ICsvLine> context)
+        private static string __GetRowCount(IEnumerable<ICsvLine> context)
         {
             var a_Context1 = 0;
             var a_Context2 = 0;
@@ -151,7 +159,7 @@ namespace resource.preview
                 a_Context1++;
                 a_Context2 = Math.Max(a_Context2, a_Context.ColumnCount);
             }
-            return "[[Row Count]]: " + a_Context1.ToString();
+            return a_Context1.ToString();
         }
     };
 }

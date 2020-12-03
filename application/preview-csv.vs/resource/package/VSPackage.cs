@@ -23,16 +23,16 @@ namespace resource.package
             public const string EXTENSION3 = ".TSV";
             public const string GUID = "B8FEC982-93E4-4BD9-885B-651BC87F0567";
             public const string NAME = "Preview-CSV";
-            public const string VERSION = "1.0.5";
+            public const string VERSION = "1.0.6";
         }
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             {
                 cartridge.AnyPreview.Connect();
-                cartridge.AnyPreview.Register(cartridge.AnyPreview.MODE.PREVIEW, CONSTANT.EXTENSION1, new preview.CSV());
-                cartridge.AnyPreview.Register(cartridge.AnyPreview.MODE.PREVIEW, CONSTANT.EXTENSION2, new preview.CSV());
-                cartridge.AnyPreview.Register(cartridge.AnyPreview.MODE.PREVIEW, CONSTANT.EXTENSION3, new preview.CSV());
+                cartridge.AnyPreview.Register(cartridge.AnyPreview.MODE.PREVIEW, CONSTANT.EXTENSION1, new preview.VSPreview());
+                cartridge.AnyPreview.Register(cartridge.AnyPreview.MODE.PREVIEW, CONSTANT.EXTENSION2, new preview.VSPreview());
+                cartridge.AnyPreview.Register(cartridge.AnyPreview.MODE.PREVIEW, CONSTANT.EXTENSION3, new preview.VSPreview());
             }
             {
                 await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
