@@ -9,7 +9,7 @@ namespace resource.preview
 {
     internal class VSPreview : cartridge.AnyPreview
     {
-        protected override void _Execute(atom.Trace context, string url)
+        protected override void _Execute(atom.Trace context, string url, int level)
         {
             if (File.Exists(url))
             {
@@ -36,16 +36,16 @@ namespace resource.preview
                         {
                             context.
                                 SetState(NAME.STATE.HEADER).
-                                Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOLDER, 1, "[[Info]]");
+                                Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOLDER, level, "[[Info]]");
                             {
-                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, 2, "[[File Name]]", url);
-                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, 2, "[[File Size]]", a_Context1.Length.ToString());
-                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, 2, "[[Row Count]]", __GetRowCount(a_Context2));
+                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[File Name]]", url);
+                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[File Size]]", a_Context1.Length.ToString());
+                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[Row Count]]", __GetRowCount(a_Context2));
                             }
                         }
                         if (a_Context2 != null)
                         {
-                            __Execute(a_Context2, 1, context, url, GetProperty(NAME.PROPERTY.PREVIEW_TABLE_SIZE));
+                            __Execute(a_Context2, level, context, url, GetProperty(NAME.PROPERTY.PREVIEW_TABLE_SIZE));
                         }
                     }
                 }
@@ -53,7 +53,8 @@ namespace resource.preview
             else
             {
                 context.
-                    SendError(1, "[[File not found]]");
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.ERROR, level, "[[File not found]]").
+                    SendPreview(NAME.TYPE.ERROR, url);
             }
         }
 
@@ -64,8 +65,6 @@ namespace resource.preview
             {
                 if (GetState() == STATE.CANCEL)
                 {
-                    context.
-                        SendWarning(level, NAME.WARNING.TERMINATED);
                     return;
                 }
                 else
@@ -75,7 +74,7 @@ namespace resource.preview
                 if (a_Index > limit)
                 {
                     context.
-                        SendWarning(level, NAME.WARNING.DATA_SKIPPED);
+                        Send(NAME.SOURCE.PREVIEW, NAME.TYPE.WARNING, level, NAME.WARNING.DATA_SKIPPED);
                     return;
                 }
                 else
@@ -90,19 +89,17 @@ namespace resource.preview
             if ((index == 1) && __IsCaption(node))
             {
                 context.
-                    SetComment("<[[Header]]>").
-                    SetCommentHint("<[[Row type]]>").
+                    SetComment("<[[Header]]>", "<[[Row type]]>").
                     SetState(NAME.STATE.HEADER);
             }
             else
             {
                 context.
-                    SetComment("[" + index.ToString("D4") + "]").
-                    SetCommentHint("[[[Row number]]]");
+                    SetComment("[" + index.ToString("D4") + "]", "[[[Row number]]]");
             }
             {
                 context.
-                    SetUrl(url).
+                    SetUrl(url, "").
                     SetUrlLine(node.Index).
                     Send(NAME.SOURCE.PREVIEW, NAME.TYPE.TABLE, level, "ROW");
             }
