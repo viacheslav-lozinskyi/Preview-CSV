@@ -1,4 +1,3 @@
-
 using Csv;
 using System;
 using System.Collections.Generic;
@@ -7,63 +6,52 @@ using System.IO;
 
 namespace resource.preview
 {
-    internal class VSPreview : cartridge.AnyPreview
+    internal class VSPreview : extension.AnyPreview
     {
-        protected override void _Execute(atom.Trace context, string url, int level)
+        protected override void _Execute(atom.Trace context, int level, string url, string file)
         {
-            if (File.Exists(url))
+            var a_Context = new CsvOptions
             {
-                var a_Context = new CsvOptions
+                RowsToSkip = 0,
+                SkipRow = (row, idx) => string.IsNullOrEmpty(row) || row[0] == '#',
+                Separator = '\0',
+                TrimData = true,
+                Comparer = null,
+                HeaderMode = HeaderMode.HeaderAbsent,
+                ValidateColumnCount = false,
+                ReturnEmptyForMissingColumn = true,
+                Aliases = null,
+                AllowNewLineInEnclosedFieldValues = false,
+                AllowBackSlashToEscapeQuote = true,
+                AllowSingleQuoteToEncloseFieldValues = true,
+                NewLine = Environment.NewLine
+            };
+            {
+                var a_Context1 = File.ReadAllText(file);
                 {
-                    RowsToSkip = 0,
-                    SkipRow = (row, idx) => string.IsNullOrEmpty(row) || row[0] == '#',
-                    Separator = '\0',
-                    TrimData = true,
-                    Comparer = null,
-                    HeaderMode = HeaderMode.HeaderAbsent,
-                    ValidateColumnCount = false,
-                    ReturnEmptyForMissingColumn = true,
-                    Aliases = null,
-                    AllowNewLineInEnclosedFieldValues = false,
-                    AllowBackSlashToEscapeQuote = true,
-                    AllowSingleQuoteToEncloseFieldValues = true,
-                    NewLine = Environment.NewLine
-                };
-                {
-                    var a_Context1 = File.ReadAllText(url);
+                    var a_Context2 = CsvReader.ReadFromText(a_Context1, a_Context);
                     {
-                        var a_Context2 = CsvReader.ReadFromText(a_Context1, a_Context);
+                        context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.HEADER, level, "[[[Info]]]");
                         {
-                            context.
-                                SetState(NAME.STATE.HEADER).
-                                Send(NAME.SOURCE.PREVIEW, NAME.TYPE.FOLDER, level, "[[Info]]");
-                            {
-                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[File Name]]", url);
-                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[File Size]]", a_Context1.Length.ToString());
-                                context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.VARIABLE, level + 1, "[[Row Count]]", __GetRowCount(a_Context2));
-                            }
+                            context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Name]]]", url);
+                            context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Size]]]", a_Context1.Length.ToString());
+                            context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[Row Count]]]", __GetRowCount(a_Context2));
                         }
-                        if (a_Context2 != null)
-                        {
-                            __Execute(a_Context2, level, context, url, GetProperty(NAME.PROPERTY.PREVIEW_TABLE_SIZE));
-                        }
+                    }
+                    if (a_Context2 != null)
+                    {
+                        __Execute(context, level, a_Context2, file, GetProperty(NAME.PROPERTY.PREVIEW_TABLE_SIZE, true));
                     }
                 }
             }
-            else
-            {
-                context.
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.ERROR, level, "[[File not found]]").
-                    SendPreview(NAME.TYPE.ERROR, url);
-            }
         }
 
-        private static void __Execute(IEnumerable<ICsvLine> node, int level, atom.Trace context, string url, int limit)
+        private static void __Execute(atom.Trace context, int level, IEnumerable<ICsvLine> data, string file, int limit)
         {
             var a_Index = 0;
-            foreach (var a_Context in node)
+            foreach (var a_Context in data)
             {
-                if (GetState() == STATE.CANCEL)
+                if (GetState() == NAME.STATE.CANCEL)
                 {
                     return;
                 }
@@ -74,46 +62,43 @@ namespace resource.preview
                 if (a_Index > limit)
                 {
                     context.
-                        Send(NAME.SOURCE.PREVIEW, NAME.TYPE.WARNING, level, NAME.WARNING.DATA_SKIPPED);
+                        Send(NAME.SOURCE.PREVIEW, NAME.TYPE.WARNING, level, "...");
                     return;
                 }
                 else
                 {
-                    __Execute(a_Context, level, context, a_Index, url);
+                    __Execute(context, level, a_Context, a_Index, file);
                 }
             }
         }
 
-        private static void __Execute(ICsvLine node, int level, atom.Trace context, int index, string url)
+        private static void __Execute(atom.Trace context, int level, ICsvLine data, int index, string file)
         {
-            if ((index == 1) && __IsCaption(node))
+            if ((index == 1) && __IsCaption(data))
             {
                 context.
-                    SetComment("<[[Header]]>", "<[[Row type]]>").
-                    SetState(NAME.STATE.HEADER);
+                    SetControl(NAME.CONTROL.TABLE).
+                    SetUrl(file, data.Index, 0).
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.HEADER, level, "HEADER");
             }
             else
             {
                 context.
-                    SetComment("[" + index.ToString("D4") + "]", "[[[Row number]]]");
+                    SetControl(NAME.CONTROL.TABLE).
+                    SetUrl(file, data.Index, 0).
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, level, "ROW");
             }
+            foreach (var a_Context in data.Values)
             {
                 context.
-                    SetUrl(url, "").
-                    SetUrlLine(node.Index).
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.TABLE, level, "ROW");
-            }
-            foreach (var a_Context in node.Values)
-            {
-                context.
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.TABLE, level + 1, __GetName(a_Context));
+                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, level + 1, __GetName(a_Context));
             }
         }
 
-        private static bool __IsCaption(ICsvLine node)
+        private static bool __IsCaption(ICsvLine data)
         {
             var a_Result = true;
-            foreach (var a_Context in node.Values)
+            foreach (var a_Context in data.Values)
             {
                 var a_Context1 = __GetName(a_Context);
                 var a_Context2 = 0.0;
@@ -125,10 +110,10 @@ namespace resource.preview
             return a_Result;
         }
 
-        private static string __GetName(string value)
+        private static string __GetName(string data)
         {
-            var a_Result = GetCleanString(value);
-            if (string.IsNullOrWhiteSpace(value))
+            var a_Result = GetFinalText(data);
+            if (string.IsNullOrWhiteSpace(data))
             {
                 return "";
             }
@@ -147,11 +132,11 @@ namespace resource.preview
             return a_Result.Trim();
         }
 
-        private static string __GetRowCount(IEnumerable<ICsvLine> context)
+        private static string __GetRowCount(IEnumerable<ICsvLine> data)
         {
             var a_Context1 = 0;
             var a_Context2 = 0;
-            foreach (var a_Context in context)
+            foreach (var a_Context in data)
             {
                 a_Context1++;
                 a_Context2 = Math.Max(a_Context2, a_Context.ColumnCount);
