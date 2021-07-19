@@ -28,6 +28,4 @@ Data extraction is based on [CSV](https://github.com/stevehansen/csv/)
 
 ## WARNING:
 
-- Correct work of this extension in **Visual Studio 2015** is possible when **[MetaOutput](https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.MetaOutput-2019)** extension is installed.
-
-- Correct work of this extension in **Visual Studio 2022** is possible when **[MetaOutput 2022](https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.MetaOutput-2022)** extension is installed.
+Correct work of this extension in **Visual Studio 2022** is possible when **[MetaOutput 2022](https://marketplace.visualstudio.com/items?itemName=ViacheslavLozinskyi.MetaOutput-2022)** extension is installed.
