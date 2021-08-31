@@ -48,7 +48,7 @@
       <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="Csv">
-      <Version>2.0.61</Version>
+      <Version>2.0.62</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0">
       <Version>15.0.26606</Version>
