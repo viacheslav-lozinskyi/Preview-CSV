@@ -48,7 +48,7 @@
       <Version>1.0.3</Version>
     </PackageReference>
     <PackageReference Include="Csv">
-      <Version>2.0.62</Version>
+      <Version>2.0.84</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="15.0.1" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
