@@ -45,10 +45,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MetaOutput.Client">
-      <Version>1.0.3</Version>
+      <Version>1.0.4</Version>
     </PackageReference>
     <PackageReference Include="Csv">
-      <Version>2.0.84</Version>
+      <Version>2.0.87</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="15.0.1" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

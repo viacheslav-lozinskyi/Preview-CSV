@@ -31,11 +31,11 @@ namespace resource.preview
                 {
                     var a_Context2 = CsvReader.ReadFromText(a_Context1, a_Context);
                     {
-                        context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.HEADER, level, "[[[Info]]]");
+                        context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.HEADER, level, "[[[Info]]]");
                         {
-                            context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Name]]]", url);
-                            context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[File Size]]]", a_Context1.Length.ToString());
-                            context.Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PARAMETER, level + 1, "[[[Row Count]]]", __GetRowCount(a_Context2));
+                            context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PARAMETER, level + 1, "[[[File Name]]]", url);
+                            context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PARAMETER, level + 1, "[[[File Size]]]", a_Context1.Length.ToString());
+                            context.Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PARAMETER, level + 1, "[[[Row Count]]]", __GetRowCount(a_Context2));
                         }
                     }
                     if (a_Context2 != null)
@@ -62,7 +62,7 @@ namespace resource.preview
                 if (a_Index > limit)
                 {
                     context.
-                        Send(NAME.SOURCE.PREVIEW, NAME.TYPE.WARNING, level, "...");
+                        Send(NAME.SOURCE.PREVIEW, NAME.EVENT.WARNING, level, "...");
                     return;
                 }
                 else
@@ -79,19 +79,19 @@ namespace resource.preview
                 context.
                     SetControl(NAME.CONTROL.TABLE).
                     SetUrl(file, data.Index, 0).
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.HEADER, level, "HEADER");
+                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.HEADER, level, "HEADER");
             }
             else
             {
                 context.
                     SetControl(NAME.CONTROL.TABLE).
                     SetUrl(file, data.Index, 0).
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, level, "ROW");
+                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PREVIEW, level, "ROW");
             }
             foreach (var a_Context in data.Values)
             {
                 context.
-                    Send(NAME.SOURCE.PREVIEW, NAME.TYPE.PREVIEW, level + 1, __GetName(a_Context));
+                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PREVIEW, level + 1, __GetName(a_Context));
             }
         }
 
