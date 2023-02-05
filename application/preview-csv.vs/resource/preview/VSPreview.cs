@@ -86,12 +86,14 @@ namespace resource.preview
                 context.
                     SetControl(NAME.CONTROL.TABLE).
                     SetUrl(file, data.Index, 0).
-                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PREVIEW, level, "ROW");
+                    SetCount(Math.Max(data.Values.Length, 50)).
+                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.CONTROL, level, "ROW");
             }
             foreach (var a_Context in data.Values)
             {
                 context.
-                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.PREVIEW, level + 1, __GetName(a_Context));
+                    SetControl(NAME.CONTROL.TABLE).
+                    Send(NAME.SOURCE.PREVIEW, NAME.EVENT.CONTROL, level + 1, __GetName(a_Context));
             }
         }
 
