@@ -51,7 +51,7 @@ namespace resource.preview
             var a_Index = 0;
             foreach (var a_Context in data)
             {
-                if (GetState() == NAME.STATE.CANCEL)
+                if (GetState() == NAME.STATE.WORK.CANCEL)
                 {
                     return;
                 }
